@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <title>NoobDunk</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="js/main.js"></script>
+    <style>
+        /* Ẩn nút tăng giảm mặc định trong các trường input type="number" */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Dành cho Firefox */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        
+        input:focus, textarea:focus, .btn-close:focus,
+        .btn:focus-visible, .nav-link:focus-visible {
+            box-shadow: none !important;
+            outline: none !important;
+        }
+    </style>
+</head>
+<body class="bg-light-subtle">
+    <header class="header sticky-top">
+        <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+            <div class="container">
+              <a class="navbar-brand" href="index.html">
+                <img class="img-fluid" src="img/logo.png" width="100px" alt="NoobDunk">
+              </a>
+              <div class="vr d-none d-lg-block bg-light ms-2 me-3" style="opacity: 1;"></div>
+              <div class="d-flex align-items-center">
+                  <ul class="navbar-nav me-auto d-block d-lg-none mb-lg-0 align-items-center">
+                      <li id="login-mb" class="nav-item">
+                          <a class="nav-link text-nowrap me-lg-3" href="#" id="loginBtn-mb">Đăng nhập</a>
+                      </li>
+                      <li id="logout-mb" class="nav-item">
+                          <a class="nav-link text-nowrap me-lg-3" href="#" id="logoutBtn-mb">Đăng xuất</a>
+                      </li>
+                  </ul>
+                  <div class="vr bg-light d-inline-block d-lg-none ms-4 me-3" style="opacity: 1;"></div>
+                  <a type="button" href="cart.html" class="btn btn-outline-secondary d-inline-block d-lg-none position-relative me-2 fs-4 border-0 rounded-3 text-light">
+                      <i class="bi bi-bag"></i>
+                      <span id="cartCount-mb" class="position-absolute translate-middle badge rounded-pill bg-danger fw-normal" style="font-size: .375em;top: 75%;left: 75%;">0</span>
+                  </a>
+                  <button class="navbar-toggler d-inline-block d-lg-none rounded-3 border-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                  </button>
+              </div>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link me-auto me-lg-3 dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Thương hiệu
+                        </a>
+                        <ul id="brands" class="dropdown-menu"></ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link me-auto me-lg-3 dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Danh mục
+                        </a>
+                        <ul id="categories" class="dropdown-menu"></ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link me-auto me-lg-3" href="#">Đơn hàng</a>
+                    </ul>
+                </li>
+                <form class="d-flex align-items-center" role="search">
+                    <ul class="navbar-nav d-none d-lg-block me-auto mb-lg-0">
+                        <li id="login" class="nav-item">
+                            <a class="nav-link text-nowrap me-lg-3" href="#" id="loginBtn">Đăng nhập</a>
+                        </li>
+                        <li id="logout" class="nav-item">
+                            <a class="nav-link text-nowrap me-lg-3" href="#" id="logoutBtn">Đăng xuất</a>
+                        </li>
+                    </ul>
+                    <div class="vr d-none d-lg-block bg-light ms-2 me-3" style="opacity: 1;"></div>
+                    <a type="button" href="cart.html" class="btn btn-outline-secondary d-none d-lg-block position-relative me-2 fs-4 border-0 text-light">
+                        <i class="bi bi-bag"></i>
+                        <span id="cartCount" class="position-absolute translate-middle badge rounded-pill bg-danger fw-normal" style="font-size: .375em;top: 75%;left: 75%;">0</span>
+                    </a>
+                    <input id="inputSearch" class="form-control border-light" type="search" placeholder="Tìm kiếm">
+                </form>
+              </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Modal Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h1 class="modal-title fs-5" id="loginModalLabel">Đăng nhập</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="email">
+                        <input type="email" id="email" class="form-control" placeholder="Nhập email" autocomplete="true" required>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary disabled" id="submitBtn">Đăng nhập</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="banner mb-5">
+        <div id="carouselHome" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="img-fluid" src="https://shopdunk.com/images/uploaded/banner/Banner%20th%C3%A1ng%208/banner%20iphone%2014%20Pro%20Max%20T8_Banner%20PC.jpg" alt="banner 01">
+                </div>
+                <div class="carousel-item">
+                    <img class="img-fluid" src="https://shopdunk.com/images/uploaded/banner/Banner%20th%C3%A1ng%208/banner%20ipad%20gen%209%20t8_Banner%20PC.jpg" alt="banner 02">
+                </div>
+                <div class="carousel-item">
+                    <img class="img-fluid" src="https://shopdunk.com/images/uploaded/banner/Banner%20th%C3%A1ng%208/banner%20macbook%20air%20t8_Banner%20PC.jpg" alt="banner 03">
+                </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselHome" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselHome" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+    </div>
+    <div class="container mb-5">
+        <div class="row row-cols-1 row-cols-md-3 g-3">
+            <div class="col">
+                <img class="img-fluid rounded-4" src="https://shopdunk.com/images/uploaded/BONUSt7.png" alt="banner sale">
+            </div>
+            <div class="col">
+                <img class="img-fluid rounded-4" src="https://shopdunk.com/images/uploaded/Bonus%20banner-26.png" alt="banner sale">
+            </div>
+            <div class="col">
+                <img class="img-fluid rounded-4" src="https://shopdunk.com/images/uploaded/Bonus%20banner-16.png" alt="banner sale">
+            </div>
+        </div>
+    </div>
+    <div class="container mb-5">
+
+        <div id="info" class="border border-light-subtle bg-white rounded-4 p-4">
+            <div id="todoList" class="container">
+                <div class='row py-5'>
+                    <div class='col py-5 text-center text-body-tertiary'>
+                        <i class="bi bi-door-open-fill fs-1 d-block text-info"></i>
+                        <p>Vui lòng đăng nhập để xem sản phẩm</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="productsList">
+            <h1 class="text-center mb-5">Sản phẩm</h1>
+            <div id="products" class="row row-cols-2 row-cols-md-4 g-2 g-md-3 mb-5">
+            </div>
+            <div class="text-center mt-3">
+                <button class="btn btn-outline-secondary rounded-3" id="loadMore">Xem thêm<i class="bi bi-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+    <footer class="container-fluid bg-dark py-4">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <h4 class="text-light text-center">© Nguyễn Sơn Tùng</h4>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

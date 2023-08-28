@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <title>NoobDunk</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="js/cart.js"></script>
+    <style>
+        /* Ẩn nút tăng giảm mặc định trong các trường input type="number" */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Dành cho Firefox */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .position-sticky {
+            top: 100px;
+        }
+
+        input:focus, textarea:focus, button:focus,
+        .btn:focus-visible, .btn-close:focus, .nav-link:focus-visible {
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        #checkOutInfo { transition: transform .3s ease-in-out, color .3s ease-in-out, background-color .3s ease-in-out , border-color .3s ease-in-out; }
+    </style>
+</head>
+<body class="bg-light-subtle">
+    <header class="header sticky-top">
+        <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+            <div class="container">
+              <a class="navbar-brand" href="index.html">
+                <img class="img-fluid" src="img/logo.png" width="100px" alt="NoobDunk">
+              </a>
+              <div class="vr d-none d-lg-block bg-light ms-2 me-3" style="opacity: 1;"></div>
+              <div class="d-flex align-items-center">
+                  <ul class="navbar-nav me-auto d-block d-lg-none mb-lg-0 align-items-center">
+                      <li id="login-mb" class="nav-item">
+                          <a class="nav-link text-nowrap me-lg-3" href="#" id="loginBtn-mb">Đăng nhập</a>
+                      </li>
+                      <li id="logout-mb" class="nav-item">
+                          <a class="nav-link text-nowrap me-lg-3" href="#" id="logoutBtn-mb">Đăng xuất</a>
+                      </li>
+                  </ul>
+                  <div class="vr bg-light d-inline-block d-lg-none ms-4 me-3" style="opacity: 1;"></div>
+                  <a type="button" href="cart.html" class="btn btn-outline-secondary d-inline-block d-lg-none position-relative me-2 fs-4 border-0 rounded-3 text-light">
+                      <i class="bi bi-bag"></i>
+                      <span id="cartCount-mb" class="position-absolute translate-middle badge rounded-pill bg-danger fw-normal" style="font-size: .375em;top: 75%;left: 75%;">0</span>
+                  </a>
+                  <button class="navbar-toggler d-inline-block d-lg-none rounded-3 border-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                  </button>
+              </div>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link me-auto me-lg-3 dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Thương hiệu
+                        </a>
+                        <ul id="brands" class="dropdown-menu"></ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link me-auto me-lg-3 dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Danh mục
+                        </a>
+                        <ul id="categories" class="dropdown-menu"></ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link me-auto me-lg-3" href="#">Đơn hàng</a>
+                    </ul>
+                </li>
+                <form class="d-flex align-items-center" role="search">
+                    <ul class="navbar-nav d-none d-lg-block me-auto mb-lg-0">
+                        <li id="login" class="nav-item">
+                            <a class="nav-link text-nowrap me-lg-3" href="#" id="loginBtn">Đăng nhập</a>
+                        </li>
+                        <li id="logout" class="nav-item">
+                            <a class="nav-link text-nowrap me-lg-3" href="#" id="logoutBtn">Đăng xuất</a>
+                        </li>
+                    </ul>
+                    <div class="vr d-none d-lg-block bg-light ms-2 me-3" style="opacity: 1;"></div>
+                    <a type="button" href="cart.html" class="btn btn-outline-secondary d-none d-lg-block position-relative me-2 fs-4 border-0 text-light">
+                        <i class="bi bi-bag"></i>
+                        <span id="cartCount" class="position-absolute translate-middle badge rounded-pill bg-danger fw-normal" style="font-size: .375em;top: 75%;left: 75%;">0</span>
+                    </a>
+                    <input id="inputSearch" class="form-control border-light" type="search" placeholder="Tìm kiếm">
+                </form>
+              </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Modal Login -->
+    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h1 class="modal-title fs-5" id="loginModalLabel">Đăng nhập</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="email">
+                        <input type="email" id="email" class="form-control" placeholder="Nhập email" autocomplete="false" required>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary disabled" id="submitBtn">Đăng nhập</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="orderContainer" class="container my-5">
+        <h1 class="mb-5">Giỏ hàng</h1>
+        <div id="cartWrapper" class="row g-4">
+            <div class="col-md-9">
+                <div class="border border-light-subtle bg-white rounded-4 p-4 mb-4">
+                    <div class="table-responsive">
+                        <table class="table table-borderless m-0">
+                            <thead>
+                              <tr>
+                                <th scope="col">Ảnh</th>
+                                <th scope="col">Tên sản phẩm</th>
+                                <th scope="col">Giá</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Tổng phụ</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody id="cart" class="table-group-divider">
+                        
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="checkOutInfo" class="border border-light-subtle bg-white rounded-4 p-4">
+                    <h5 class="mb-3">Thông tin thanh toán</h5>
+                    <div class="row g-3 has-validation" novalidate>
+                        <div class="col-md-6">
+                            <div class="form-floating position-relative">
+                                <input id="tenKH" type="text" class="form-control px-3 rounded-3" placeholder="Tên của bạn" autocomplete="false" required>
+                                <label for="tenKH" class="px-3">Họ tên</label>
+                                <div id="invalidName" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating position-relative">
+                                <input id="phone" type="number" max="10" class="form-control px-3 rounded-3" placeholder="Số điện thoại" autocomplete="false" required>
+                                <label for="phone" class="px-3">Điện thoại</label>
+                                <div id="invalidPhone" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="form-floating position-relative">
+                                <input id="address" type="text" class="form-control px-3 rounded-3" placeholder="Nhập địa chỉ đầy đủ" autocomplete="false" required>
+                                <label for="address" class="px-3">Địa chỉ</label>
+                                <div id="invalidAddress" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="border border-light-subtle bg-white rounded-4 p-4 position-sticky">
+                    <table class="table m-0">
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="2" class="px-0">Thanh toán</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row" class="border-bottom-0 fw-bold px-0">Tổng</td>
+                                <td id="total" class="text-end border-bottom-0 px-0"></td>
+                            </tr>
+                            <tr>
+                                <td class="border-bottom-0 p-0" colspan="2">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-grid">
+                        <button id="checkOutBtn" class="btn btn-primary mt-3" type="button">Thanh toán</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <footer class="container-fluid bg-dark py-4">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <h4 class="text-light text-center">© Nguyễn Sơn Tùng</h4>
+                </div>
+            </div>
+        </div>
+    </footer> -->
+</body>
+</html>
