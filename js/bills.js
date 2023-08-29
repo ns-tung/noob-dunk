@@ -149,14 +149,14 @@ function showData() {
                 if (Array.isArray(brands) && brands.length) {
                     str = '';
                     brands.forEach(e => {
-                        str+=`<li><a class="dropdown-item" href="#">${e.name}</a></li>`;
+                        str+=`<li><a class="dropdown-item" href="brand.html?id=${e.id}}">${e.name}</a></li>`;
                     });
                     $('#brands').html(str);
                 }
                 if (Array.isArray(categories) && categories.length) {
                     str = '';
                     categories.forEach(e => {
-                        str+=`<li><a class="dropdown-item" href="#">${e.name}</a></li>`;
+                        str+=`<li><a class="dropdown-item" href="category.html?id=${e.id}">${e.name}</a></li>`;
                     });
                     $('#categories').html(str);
                 }
@@ -239,7 +239,7 @@ function billDetail() {
                     });
                     str+=`
                         <tr>
-                            <td scope="row" colspan="4" class="border-top text-light-emphasis py-3 fw-bold">Tổng tiền:</td>
+                            <td scope="row" colspan="4" class="border-top text-light-emphasis py-3 fw-bold">Tổng cộng:</td>
                             <td class="border-top text-primary py-3">${formatCurrency(sum)}</td>
                         </tr>`;
 

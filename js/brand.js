@@ -3,37 +3,37 @@ const token = localStorage.getItem('token');
 const api = 'https://students.trungthanhweb.com/api/';
 const imgSrc = 'https://students.trungthanhweb.com/images/';
 const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 1000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                      toast.addEventListener('mouseenter', Swal.stopTimer)
-                      toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                });
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+});
 
 $(document).ready(function () {
     login();
     logout();
-    loadData();
-    loadMore();
     checkInfo();
+    showData();
 });
-
-function checkInfo() {
-    if (token&&token!==null) {
-        $('#login,#login-mb,#info').hide();
-    } else {
-        $('#logout,#logout-mb,#productsList,#brands,#categories').hide();
-    }
-}
 
 function formatCurrency(e) {
     e = e.toString();
     e = e.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
     return e;
+}
+
+function checkInfo() {
+    if (token&&token!==null) {
+        $('#login,#login-mb,#info').hide();
+    } else {
+        $('#logout,#logout-mb,#brands,#categories').hide();
+        $('#cartCount,#cartCount-mb').text('0');
+    }
 }
 
 function login() {
@@ -45,7 +45,7 @@ function login() {
         loginModal.modal('show');
         emailInput.keyup(function () {
             const email = emailInput.val().trim();
-            submitBtn.toggleClass('disabled', email === '')
+            submitBtn.toggleClass('disabled', email === '');
         })
         submitBtn.click(function (e) { 
             e.preventDefault();
@@ -86,17 +86,30 @@ function logout() {
         Toast.fire({
             icon: 'success',
             title: 'OK, See ya!'
-        }).then(()=>{ window.location.reload(); });
+        }).then(()=>{window.location.replace('index.html');});
     });
 }
 
-let link = api+'home'; 
-function loadData() {
-    if (token&&token!==null) {
+function showData() {
+    let url = api+'getBrandProducts';
+    const params = new URLSearchParams(window.location.search);
+    if (token||token!==null) {
+        if (storedCart||storedCart!==null) {
+            let cart = JSON.parse(storedCart);
+            $('#cartCount,#cartCount-mb').text(cart.length);
+        }
+        if (!params.has('id')||params.get('id')==='') {
+            window.location.replace('index.html');
+        }
+        let id = params.get('id');
+        let page = 1;
+        if (params.has('page')) {
+            page = params.get('page');
+        }
         $.ajax({
             type: "GET",
-            url: link,
-            data: {apitoken:token},
+            url: url,
+            data: {apitoken:token,id,page},
             dataType: "JSON",
             success: function (res) {
                 const brands = res.brands;
@@ -117,12 +130,21 @@ function loadData() {
                     $('#categories').html(str);
                 }
                 if (Array.isArray(products) && products.length) {
+                    const brandName = brands.find(e => e.id.toString() === id).name;
+                    $('#productsList').html(`
+                        <h1 class="text-center mb-5">${brandName}</h1>
+                        <div id="products" class="row row-cols-2 row-cols-md-3 g-3 g-md-4 mb-5">
+                        </div>
+                        <nav class="text-center mt-3">
+                            <ul id="pagination" class="list-unstyled d-inline-flex gap-2"></ul>
+                        </nav>`);
+                    $('title').text(`Thương hiệu: ${brandName} – NoobDunk`);
                     str = '';
                     products.forEach(e => {
                         str+=`
                         <div class="col">
                             <div class="card rounded-4 pt-3 bg-white border-light-subtle">
-                                <img src="${imgSrc+e.images}" class="card-img-top" alt="${e.name}">
+                                <img src="${imgSrc+e.image}" class="card-img-top" alt="${e.name}">
                                 <div class="card-body">
                                     <p>
                                         <span class="badge text-bg-secondary">${e.catename}</span>
@@ -139,24 +161,31 @@ function loadData() {
                         </div>`;
                     });
                     $('#products').append(str);
-                    if (res.products.next_page_url!==null) {
-                        link = res.products.next_page_url;
-                    } else {
-                        $('#loadMore').attr('disabled',true).text('😅 Hết rồi fen');
+                    const lastPage = res.products.last_page;
+                    const currentPage = res.products.current_page;
+                    pgItem = '';
+                    let i = 1;
+                    while (i<=lastPage) {
+                        if (i===currentPage) {
+                            pgItem+=`
+                            <li class="pg-item active">
+                                <a class="pg-link btn border-light-subtle bg-white text-body-tertiary rounded-3" href="brand.html?id=${id}&page=${i}">${i}</a>
+                            </li>`
+                        } else {
+                            pgItem+=`
+                            <li class="pg-item">
+                                <a class="pg-link btn border-light-subtle bg-white text-body-tertiary rounded-3" href="brand.html?id=${id}&page=${i}">${i}</a>
+                            </li>`
+                        }
+                        i++;
                     }
+                    $('#pagination').html(pgItem);
                 }
                 addToCart();
-                searchProduct();
+                // searchProduct();
             }
         });
     }
-}
-
-function loadMore() {
-    $('#loadMore').click(function (e) { 
-        e.preventDefault();
-        loadData();
-    });
 }
 
 function addToCart() {
@@ -190,50 +219,4 @@ function addToCart() {
             title: 'Đã thêm vào giỏ!'
         });
     });
-}
-
-function searchProduct() {
-    const inputSearch = $('#inputSearch');
-    const currentProducts = $('#products').html();
-    inputSearch.on('keyup',_.debounce(function () {
-        let name = inputSearch.val().trim();
-        if (name!=='') {
-            $.ajax({
-                type: "GET",
-                url: api+"getSearchProducts",
-                data: {apitoken:token,name},
-                dataType: "JSON",
-                success: function (res) {
-                    let products = res.result;
-                    if (products.length) {
-                        str = '';
-                        products.forEach(e => {
-                            str+=`
-                            <div class="col">
-                                <div class="card rounded-4 pt-3 bg-white border-light-subtle">
-                                    <img src="${imgSrc+e.image}" class="card-img-top" alt="${e.name}">
-                                    <div class="card-body">
-                                        <p>
-                                            <span class="badge text-bg-secondary">${e.catename}</span>
-                                            <span class="badge text-bg-dark">${e.brandname}</span>
-                                        </p>
-                                        <h5 class="card-title">${e.name}</h5>
-                                        <p class="card-text text-danger">${formatCurrency(e.price)}</p>
-                                        <button class="btn btn-sm rounded-3 btn-outline-secondary me-2" data-id="${e.id}">Xem</button> 
-                                        <button class="btn btn-sm rounded-3 btn-danger addToCart" data-id="${e.id}"><i class="bi bi-bag-plus me-1"></i>Thêm vào giỏ</button>
-                                    </div>
-                                </div>
-                            </div>`;
-                        });
-                        $('#products').html(str);
-                        $('#loadMore').hide();
-                    }
-                    addToCart();
-                }
-            });
-        } else {
-            $('#products').html(currentProducts);
-            $('#loadMore').show();
-        }
-    },2000));
 }

@@ -277,14 +277,14 @@ function showCart() {
                 if (Array.isArray(brands) && brands.length) {
                     str = '';
                     brands.forEach(e => {
-                        str+=`<li><a class="dropdown-item" href="#">${e.name}</a></li>`;
+                        str+=`<li><a class="dropdown-item" href="brand.html?id=${e.id}">${e.name}</a></li>`;
                     });
                     $('#brands').html(str);
                 }
                 if (Array.isArray(categories) && categories.length) {
                     str = '';
                     categories.forEach(e => {
-                        str+=`<li><a class="dropdown-item" href="#">${e.name}</a></li>`;
+                        str+=`<li><a class="dropdown-item" href="category.html?id=${e.id}">${e.name}</a></li>`;
                     });
                     $('#categories').html(str);
                 }
@@ -294,20 +294,20 @@ function showCart() {
                     cart.forEach(e => {
                         str+=`
                             <tr>
-                                <td scope="row" class="border-top w-25">
+                                <td scope="row" class="border-top py-4" style="width: 10%;">
                                     <img src="${e[3]}" alt="${e[1]}" class="img-fluid">
                                 </td>
-                                <td class="border-top w-50">${e[1]}</td>
-                                <td class="border-top w-25">${formatCurrency(e[5])}</td>
-                                <td class="border-top w-50">
+                                <td class="border-top py-4"><a href="product.html?id=${e[0]}">${e[1]}</a></td>
+                                <td class="border-top py-4">${formatCurrency(e[5])}</td>
+                                <td class="border-top py-4">
                                     <div class="btn-group" role="group">
                                         <button type="button" role="button" class="btn btn-sm bg-secondary-subtle text-primary border-0 ${e[4]===1?'disabled':''}" onclick="decOne(this)">–</button>
                                         <input type="number" readonly class="btn btn-sm bg-secondary-subtle border-0" name="quantity" value="${e[4]}" data-id="${e[0]}" style="width: 40px">
                                         <button type="button" role="button" class="btn btn-sm bg-secondary-subtle text-primary border-0" onclick="incOne(this)">+</button>
                                     </div>
                                 </td>
-                                <td class="border-top w-50">${formatCurrency(e[6])}</td>
-                                <td class="border-top text-center">
+                                <td class="border-top py-4">${formatCurrency(e[6])}</td>
+                                <td class="border-top py-4 text-center">
                                     <i role="button" class="bi bi-trash fs-5 d-block text-secondary trash" data-id="${e[0]}" onclick="deleteProduct(this)"></i>
                                 </td>
                             </tr>`;
