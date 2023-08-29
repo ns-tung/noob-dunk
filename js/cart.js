@@ -13,7 +13,7 @@ const Toast = Swal.mixin({
         }
 });
 
-let cartWrapper = `
+const cartWrapper = `
     <div class="col">
         <div class="border border-light-subtle bg-white rounded-4 p-4">
             <div class="container">
@@ -36,7 +36,6 @@ $(document).ready(function () {
     logout();
     checkInfo();
     showCart();
-    checkInput();
     
     function checkInput() {
         this.checkNull = function (value) {
@@ -111,7 +110,7 @@ $(document).ready(function () {
                 success: function (res) {
                     if (res) {
                         localStorage.removeItem('cart');
-                        $('#orderContainer').html(`
+                        $('#container').html(`
                             <div class="row">
                                 <div class="col">
                                     <div class="border border-light-subtle bg-white rounded-4 p-4">
@@ -231,7 +230,7 @@ function logout() {
             icon: 'success',
             title: 'OK, See ya!'
         }).then(()=>{
-            $('#orderContainer').html(`
+            $('#container').html(`
                 <div class="row">
                     <div class="col">
                         <div class="border border-light-subtle bg-white rounded-4 p-4">
@@ -263,7 +262,7 @@ function logout() {
 }
 
 function showCart() {
-    if (storedCart||storedCart!==null) {
+    if (storedCart&&storedCart!==null) {
         let cart = JSON.parse(storedCart);
         $('#cartCount,#cartCount-mb').text(cart.length);
         $.ajax({
@@ -321,6 +320,30 @@ function showCart() {
         });
     } else {
         $('#cartWrapper').html(cartWrapper);
+        $.ajax({
+            type: "GET",
+            url: api+"home",
+            data: {apitoken:token},
+            dataType: "JSON",
+            success: function (res) {
+                const brands = res.brands;
+                const categories = res.categrories;
+                if (Array.isArray(brands) && brands.length) {
+                    str = '';
+                    brands.forEach(e => {
+                        str+=`<li><a class="dropdown-item" href="#">${e.name}</a></li>`;
+                    });
+                    $('#brands').html(str);
+                }
+                if (Array.isArray(categories) && categories.length) {
+                    str = '';
+                    categories.forEach(e => {
+                        str+=`<li><a class="dropdown-item" href="#">${e.name}</a></li>`;
+                    });
+                    $('#categories').html(str);
+                }
+            }
+        });
     }
 }
 
