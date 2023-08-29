@@ -331,14 +331,14 @@ function showCart() {
                 if (Array.isArray(brands) && brands.length) {
                     str = '';
                     brands.forEach(e => {
-                        str+=`<li><a class="dropdown-item" href="#">${e.name}</a></li>`;
+                        str+=`<li><a class="dropdown-item" href="brand.html?id=${e.id}">${e.name}</a></li>`;
                     });
                     $('#brands').html(str);
                 }
                 if (Array.isArray(categories) && categories.length) {
                     str = '';
                     categories.forEach(e => {
-                        str+=`<li><a class="dropdown-item" href="#">${e.name}</a></li>`;
+                        str+=`<li><a class="dropdown-item" href="category.html?id=${e.id}">${e.name}</a></li>`;
                     });
                     $('#categories').html(str);
                 }
