@@ -176,16 +176,14 @@ function addToCart() {
 
         let check = false;
         cart.forEach(e => {
-            console.log(e);
             if (e[0]===id) {
                 e[1]++;
                 check = true;
             }
-            console.log(check);
         });
         if (!check) {
             cart.push(product);
-            $('#cartCount').text(cart.length);
+            $('#cartCount,#cartCount-mb').text(cart.length);
         }
         localStorage.setItem('cart',JSON.stringify(cart));
         Toast.fire({

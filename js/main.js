@@ -86,7 +86,7 @@ function logout() {
         Toast.fire({
             icon: 'success',
             title: 'OK, See ya!'
-        }).then(()=>{ window.location.reload(); });
+        }).then(()=>{ window.location.reload()});
     });
 }
 
@@ -173,16 +173,14 @@ function addToCart() {
 
         let check = false;
         cart.forEach(e => {
-            console.log(e);
             if (e[0]===id) {
                 e[1]++;
                 check = true;
             }
-            console.log(check);
         });
         if (!check) {
             cart.push(product);
-            $('#cartCount').text(cart.length);
+            $('#cartCount,#cartCount-mb').text(cart.length);
         }
         localStorage.setItem('cart',JSON.stringify(cart));
         Toast.fire({
@@ -235,5 +233,5 @@ function searchProduct() {
             $('#products').html(currentProducts);
             $('#loadMore').show();
         }
-    },2000));
+    },1000));
 }
