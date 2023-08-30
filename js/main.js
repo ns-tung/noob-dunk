@@ -219,7 +219,7 @@ function searchProduct() {
                                         </p>
                                         <h5 class="card-title">${e.name}</h5>
                                         <p class="card-text text-danger">${formatCurrency(e.price)}</p>
-                                        <button class="btn btn-sm rounded-3 btn-outline-secondary me-2" data-id="${e.id}">Xem</button> 
+                                        <a href="product.html?id=${e.id}" class="btn btn-sm rounded-3 btn-outline-secondary me-2" data-id="${e.id}">Xem</a> 
                                         <button class="btn btn-sm rounded-3 btn-danger addToCart" data-id="${e.id}"><i class="bi bi-bag-plus me-1"></i>Thêm vào giỏ</button>
                                     </div>
                                 </div>
