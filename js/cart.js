@@ -47,11 +47,6 @@ $(document).ready(function () {
             let regex = /(0[3|5|7|8|9])+([0-9]{8})\b/g;
             return regex.test(number);
         };
-        
-        this.checkText = function (text) {
-            let regex = /^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\\s]+$/;
-            return regex.test(text);
-        };
     }
 
     function validateInput(inputElement, errorElement, errorMsg, checkFunction) {
@@ -70,12 +65,7 @@ $(document).ready(function () {
     }
 
     tenKhInput.on('blur', function() {
-        const tenKH = tenKhInput.val().trim();
-        if (!ckInput.checkNull(tenKH)) {
-            validateInput(tenKhInput, invalidName, 'Chưa nhập tên!', ckInput.checkNull);
-        } else {
-            validateInput(tenKhInput, invalidName, 'Tên không đúng!', ckInput.checkText);
-        }
+        validateInput(tenKhInput, invalidName, 'Chưa nhập tên!', ckInput.checkNull);
     });
 
     phoneInput.on('blur', function() {
