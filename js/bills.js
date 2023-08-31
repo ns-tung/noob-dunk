@@ -149,7 +149,7 @@ function showData() {
                 if (Array.isArray(brands) && brands.length) {
                     str = '';
                     brands.forEach(e => {
-                        str+=`<li><a class="dropdown-item" href="brand.html?id=${e.id}}">${e.name}</a></li>`;
+                        str+=`<li><a class="dropdown-item" href="brand.html?id=${e.id}">${e.name}</a></li>`;
                     });
                     $('#brands').html(str);
                 }
