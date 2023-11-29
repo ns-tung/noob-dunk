@@ -253,12 +253,11 @@ function logout() {
 
 function showCart() {
     if (storedCart&&storedCart!==null) {
-        let cart = JSON.parse(storedCart);
-        $('#cartCount,#cartCount-mb').text(cart.length);
+        $('#cartCount,#cartCount-mb').text(JSON.parse(storedCart).length);
         $.ajax({
             type: "GET",
             url: api+"getCart",
-            data: {apitoken:token,id:cart},
+            data: {apitoken:token,id:storedCart},
             dataType: "JSON",
             success: function (res) {
                 const brands = res.brands;
@@ -291,7 +290,7 @@ function showCart() {
                                 <td class="border-top py-4">${formatCurrency(e[5])}</td>
                                 <td class="border-top py-4">
                                     <div class="btn-group" role="group">
-                                        <button type="button" role="button" class="btn btn-sm bg-secondary-subtle text-primary border-0 ${e[4]===1?'disabled':''}" onclick="decOne(this)">–</button>
+                                        <button type="button" role="button" class="btn btn-sm bg-secondary-subtle text-primary border-0${e[4]===1?' disabled':''}" onclick="decOne(this)">–</button>
                                         <input type="number" readonly class="btn btn-sm bg-secondary-subtle border-0" name="quantity" value="${e[4]}" data-id="${e[0]}" style="width: 40px">
                                         <button type="button" role="button" class="btn btn-sm bg-secondary-subtle text-primary border-0" onclick="incOne(this)">+</button>
                                     </div>
